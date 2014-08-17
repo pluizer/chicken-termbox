@@ -68,7 +68,7 @@
 	 key-ctrl-8
 	 ;; Modification keys
 	 mod-alt
-	 ;; Colors
+	 ;; Colours
 	 black
 	 red
 	 green
@@ -183,8 +183,8 @@
 (define key-ctrl-8 #x7f)
 ;; Modification keys
 (define mod-alt #x01)
-;; Colors
-(define default-color #x00)
+;; Colours
+(define default-colour #x00)
 (define black #x01)
 (define red #x02)
 (define green #x03)
@@ -267,11 +267,11 @@
    (foreign-lambda* void ((c-pointer cell)) "free(cell);")))
 
 #|
-Creates a style, combining a ''color'' with zero or more
+Creates a style, combining a ''colour'' with zero or more
 attributes: underline, bold, and reversed.
 |#
-(define (style color #!rest attributes)
-  (apply bitwise-ior (cons color attributes)))
+(define (style colour #!rest attributes)
+  (apply bitwise-ior (cons colour attributes)))
 
 #|
 Creates a cell containing a character with specific foreground and
@@ -333,11 +333,11 @@ unspecified negative value when called before ''(init)'' or after ''(shutdown)''
 
 #|
 Clears the interbal back buffer to specific foreground and background
-color/attributes which default to ''default-color''
+colour/attributes which default to ''default-colour''
 |#
 (define (clear #!optional
-	       (fg default-color)
-	       (bg default-color))
+	       (fg default-colour)
+	       (bg default-colour))
   ((foreign-lambda void "tb_set_clear_attributes" 
 		   unsigned-short unsigned-short) fg bg)
   ((foreign-lambda void "tb_clear")))
@@ -414,7 +414,7 @@ Returns the current mode if node ''mode'' is given.
 #|
 Sets the termbox output mode. Termbox has three output options:
 1. ''normal''     => [1..8]
-   This mode provides 8 different colors:
+   This mode provides 8 different colours:
      black, red, green, yellow, blue, magenta, cyan, white
    Shortcut: ''black'', ''red'' ...
    Attributes: ''bold'', ''underline'', ''reversed''
@@ -424,9 +424,9 @@ Sets the termbox output mode. Termbox has three output options:
 
 2. ''256''        => [0..256]
    In this mode you can leverage the 256 terminal mode:
-   0x00 - 0x07: the 8 colors as in ''normal''
+   0x00 - 0x07: the 8 colours as in ''normal''
    0x08 - 0x0f: (style red bold)
-   0x10 - 0xe7: 216 different colors
+   0x10 - 0xe7: 216 different colours
    0xe8 - 0xff: 24 different shades of grey
 
    Example usage:
