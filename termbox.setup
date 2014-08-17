@@ -1,0 +1,3 @@
+(compile -s -O3 -d1 utf8.c ctermbox.c termbox.scm -j termbox)
+(compile -s -O3 -d0 termbox.scm)
+(install-extension 'termbox '("termbox.so") '((version "0.1")))
