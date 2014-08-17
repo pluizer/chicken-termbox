@@ -82,11 +82,9 @@
 	 underline
 	 reversed
 	 ;; Cell
-	 %create-cell
-	 %create-cells
-	 %create-attribute
 	 create-cell
 	 create-cells
+	 style
 	 ;; Functions
 	 init
 	 shutdown
@@ -98,12 +96,13 @@
 	 hide-cursor!
 	 put-cell!
 	 blit
+	 bprintf
 	 input-mode
 	 output-mode
 	 ; peek-event ; find a way to place neatly
 	 poll)
 	(import chicken scheme foreign)
-	(use srfi-4)
+	(use srfi-4 extras)
 	
 #>
 #include "termbox.h"
@@ -254,7 +253,7 @@
 
 ;; Cell
 
-(define (%%create-cell cell fg bg)
+(define (%create-cell cell fg bg)
   (set-finalizer!
    ((foreign-lambda* c-pointer
 		     ((unsigned-integer ch)
@@ -267,16 +266,11 @@
 	C_return(cell);") cell fg bg)
    (foreign-lambda* void ((c-pointer cell)) "free(cell);")))
 
-(define (%create-cell char fg bg)
-  (%%create-cell
-   (u32vector-ref (utf8-char-to-unicode (string char)) 0)
-   fg bg))
-
-(define (%create-cells string fg bg)
-  (map (lambda (x) (%create-cell x fg bg))
-       (string->list string)))
-
-(define (%create-attribute color #!rest attributes)
+#|
+Creates a style, combining a ''color'' with zero or more
+attributes: underline, bold, and reversed.
+|#
+(define (style color #!rest attributes)
   (apply bitwise-ior (cons color attributes)))
 
 #|
@@ -284,31 +278,24 @@ Creates a cell containing a character with specific foreground and
 background colours/attributes. These can then be put on screen with
 the functions ''(put-cell!)'' or ''(blit)''.
 
-
-''fg'' can be a list starting with a colour plus zero or more attributes:
-bold, underline or reversed.
-
-
 Example:
 	; Create a letter ''H'' with black text and a white background.
-	(create-cell #\H black white)
+	(create-cell #\H (style black) (style white))
 	; Create a letter ''H'' with black underlines text and a white background.
-	(create-cell #\H (create-attributes (black underline) white)
+	(create-cell #\H (style black underline) (style white))
 |#
-(define-syntax create-cell
-  (syntax-rules ()
-    ((_ char (fg attr ...) bg)
-     (%create-cell char (%create-attribute fg attr ...) bg))
-    ((_ char fg bg)
-     (%create-cell char fg bg))))
+(define (create-cell char fg bg)
+  (%create-cell
+   (u32vector-ref (utf8-char-to-unicode (string char)) 0)
+   fg bg))
 
-(define-syntax create-cells
-  (syntax-rules ()
-    ((_ string (fg attr ...) bg)
-     (%create-cells string (%create-attribute fg attr ...) bg))
-    ((_ string fg bg)
-     (%create-cells string fg bg))))
-
+#|
+Create a list of cells of all characters in ''string'' all sharing the
+same foreground and background style.
+|#
+(define (create-cells string fg bg)
+  (map (lambda (x) (create-cell x fg bg))
+       (string->list string)))
 
 
 ;; Chickens error messages will not be displayed right when Termbox is active
@@ -386,11 +373,20 @@ one-dimensional list containing lines of cells starting from the top.
 |#
 (define (blit x y w h cells)
   (let loop ((i 0) (cells cells))
-    (let ((x (modulo i w))
-	  (y (floor-fix (/ i w))))
+    (let ((x (+ (modulo i w) x))
+	  (y (+ (floor-fix (/ i w)) y)))
       (put-cell! x y (car cells))
       (unless (null? (cdr cells))
 	      (loop (+ i 1) (cdr cells))))))
+
+#|
+Prints a formated string (like printf) at position (x y).
+Using a specific foreground and background style.
+|#
+(define (bprintf x y fg bg formatstring #!rest args)
+  (blit x y (width) (height)
+	(create-cells (apply sprintf (cons formatstring args))
+		      fg bg)))
 
 #|
 Sets the termbox input mode. Termbox has two input modes:
@@ -424,12 +420,12 @@ Sets the termbox output mode. Termbox has three output options:
    Attributes: ''bold'', ''underline'', ''reversed''
 
    Example usage:
-       (change_cell! x y #\@ (create-attribute black bold) red)
+       (change_cell! x y #\@ (style black bold) red)
 
 2. ''256''        => [0..256]
    In this mode you can leverage the 256 terminal mode:
    0x00 - 0x07: the 8 colors as in ''normal''
-   0x08 - 0x0f: (create-attribute colour-* bold)
+   0x08 - 0x0f: (style red bold)
    0x10 - 0xe7: 216 different colors
    0xe8 - 0xff: 24 different shades of grey
 
