@@ -452,8 +452,8 @@ Sets the termbox output mode. Termbox has three output options:
    0xe8 - 0xff: 24 different shades of grey
 
    Example usage:
-       (change_cell! x y #\@ 184 240)
-       (change_cell! x y #\@ #xb8 #xf0)
+       (change_cell! x y #\@ (style 184) (style 240))
+       (change_cell! x y #\@ (style #xb8) (style #xf0))
 
 2. ''216''        => [0..216]
    This mode supports the 3rd range of the 256 mode only.
