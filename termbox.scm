@@ -82,8 +82,11 @@
 	 underline
 	 reversed
 	 ;; Cell
+	 %create-cell
+	 %create-cells
+	 %create-attribute
 	 create-cell
-	 create-attribute
+	 create-cells
 	 ;; Functions
 	 init
 	 shutdown
@@ -251,24 +254,62 @@
 
 ;; Cell
 
-(define %create-cell
-  (foreign-primitive c-pointer
+(define (%%create-cell cell fg bg)
+  (set-finalizer!
+   ((foreign-lambda* c-pointer
 		     ((unsigned-integer ch)
 		      (unsigned-short fg)
 		      (unsigned-short bg)) "
-	struct tb_cell cell;
-	cell.ch = ch;
-	cell.fg = fg;
-	cell.bg = bg;
-	C_return(&cell);"))
+	struct tb_cell* cell = malloc(sizeof(struct tb_cell));
+	cell->ch = ch;
+	cell->fg = fg;
+	cell->bg = bg;
+	C_return(cell);") cell fg bg)
+   (foreign-lambda* void ((c-pointer cell)) "free(cell);")))
 
-(define (create-cell char fg bg)
-  (%create-cell
+(define (%create-cell char fg bg)
+  (%%create-cell
    (u32vector-ref (utf8-char-to-unicode (string char)) 0)
    fg bg))
 
-(define (create-attribute color #!rest attributes)
+(define (%create-cells string fg bg)
+  (map (lambda (x) (%create-cell x fg bg))
+       (string->list string)))
+
+(define (%create-attribute color #!rest attributes)
   (apply bitwise-ior (cons color attributes)))
+
+#|
+Creates a cell containing a character with specific foreground and
+background colours/attributes. These can then be put on screen with
+the functions ''(put-cell!)'' or ''(blit)''.
+
+
+''fg'' can be a list starting with a colour plus zero or more attributes:
+bold, underline or reversed.
+
+
+Example:
+	; Create a letter ''H'' with black text and a white background.
+	(create-cell #\H black white)
+	; Create a letter ''H'' with black underlines text and a white background.
+	(create-cell #\H (create-attributes (black underline) white)
+|#
+(define-syntax create-cell
+  (syntax-rules ()
+    ((_ char (fg attr ...) bg)
+     (%create-cell char (%create-attribute fg attr ...) bg))
+    ((_ char fg bg)
+     (%create-cell char fg bg))))
+
+(define-syntax create-cells
+  (syntax-rules ()
+    ((_ string (fg attr ...) bg)
+     (%create-cells string (%create-attribute fg attr ...) bg))
+    ((_ string fg bg)
+     (%create-cells string fg bg))))
+
+
 
 ;; Chickens error messages will not be displayed right when Termbox is active
 ;; so this mess will close Termbox first, if it is running, before spitting
