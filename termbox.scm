@@ -478,7 +478,6 @@ must be of form (lambda (w h) ...).
 |#
 (define (poll on-keypress on-resize)
   (let ((event (poll-event)))
-    (print (event-type event))
     (if (eq? (event-type event) key-event)
 	(on-keypress (event-mod event)
 		     (event-key event)
