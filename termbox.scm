@@ -279,7 +279,7 @@
 #|
 Initializes the termbox library. This function should be called before any
 other functions. After successful initialization, the library must be
-finalized using the ``(shutdown)`` function.
+finalized using the ''(shutdown)'' function.
 |#
 (define (init)
   (was-init #t)
@@ -297,15 +297,15 @@ finalized using the ``(shutdown)`` function.
 #|
 Returns the size of the internal back buffer (which is the same as
 terminal's window size in characters). The internal buffer can be resized
-after ``(clear)`` or ``(present)`` function calls. Both dimensions have an
-unspecified negative value when called before ``(init)`` or after ``(shutdown)``.
+after ''(clear)'' or ''(present)'' function calls. Both dimensions have an
+unspecified negative value when called before ''(init)'' or after ''(shutdown)''.
 |#
 (define width (foreign-lambda int "tb_width"))
 (define height (foreign-lambda int "tb_height"))
 
 #|
 Clears the interbal back buffer to specific foreground and background
-color/attributes which default to ``default-color``
+color/attributes which default to ''default-color''
 |#
 (define (clear #!optional
 	       (fg default-color)
@@ -325,7 +325,7 @@ Sets the position of the cursor. Upper-left character is (0, 0).
 (define cursor-set! (foreign-lambda void "tb_set_cursor" int int))
 
 #|
-Hides the cursor. If ``(cursor-set!)`` is called after this the
+Hides the cursor. If ''(cursor-set!)'' is called after this the
 cursor will be visible again. Cursor is hidden by default.
 |#
 (define (hide-cursor!)
@@ -353,14 +353,14 @@ one-dimensional list containing lines of cells starting from the top.
 
 #|
 Sets the termbox input mode. Termbox has two input modes:
-1. ``esc`` input mode.
+1. ''esc'' input mode.
    When ESC sequence is in the buffer and it doesn't match any known
-   ESC sequence => ESC means TB_KEY_ESC.
-2. ``alt`` input mode.
+   ESC sequence.
+2. ''alt'' input mode.
    When ESC sequence is in the buffer and it doesn't match any known
-   sequence => ESC enables TB_MOD_ALT modifier for the next keyboard event.
+   sequence => ESC enables ''mod-alt'' modifier for the next keyboard event.
 
-Returns the current mode if node ``mode`` is given.
+Returns the current mode if node ''mode'' is given.
 |#
 (define (input-mode #!optional mode)
   (let ((ret
@@ -376,18 +376,18 @@ Returns the current mode if node ``mode`` is given.
 
 #|
 Sets the termbox output mode. Termbox has three output options:
-1. ``normal``     => [1..8]
+1. ''normal''     => [1..8]
    This mode provides 8 different colors:
      black, red, green, yellow, blue, magenta, cyan, white
-   Shortcut: ``black``, ``red`` ...
-   Attributes: ``bold``, ``underline``, ``reversed``
+   Shortcut: ''black'', ''red'' ...
+   Attributes: ''bold'', ''underline'', ''reversed''
 
    Example usage:
        (change_cell! x y #\@ (create-attribute black bold) red)
 
-2. ``256``        => [0..256]
+2. ''256''        => [0..256]
    In this mode you can leverage the 256 terminal mode:
-   0x00 - 0x07: the 8 colors as in ``normal``
+   0x00 - 0x07: the 8 colors as in ''normal''
    0x08 - 0x0f: (create-attribute colour-* bold)
    0x10 - 0xe7: 216 different colors
    0xe8 - 0xff: 24 different shades of grey
@@ -396,15 +396,15 @@ Sets the termbox output mode. Termbox has three output options:
        (change_cell! x y #\@ 184 240)
        (change_cell! x y #\@ #xb8 #xf0)
 
-2. ``216``        => [0..216]
+2. ''216''        => [0..216]
    This mode supports the 3rd range of the 256 mode only.
    But you dont need to provide an offset.
 
-3. ``grayscale``  => [0..23]
+3. ''grayscale''  => [0..23]
    This mode supports the 4th range of the 256 mode only.
    But you dont need to provide an offset.
 
-Returns the current mode if node ``mode`` is given.
+Returns the current mode if node ''mode'' is given.
 |#
 (define (output-mode #!optional mode)
   (let ((ret
@@ -430,9 +430,9 @@ Returns the current mode if node ``mode`` is given.
 
 #|
 Waits until there is an event availiable. If there is it
-will call, if it is a key event, ``on-keypress`` which must 
+will call, if it is a key event, ''on-keypress'' which must 
 be of form (lambda (mod key ch) ...).
-If the event is a resize event it will kall ``on-resize`` which
+If the event is a resize event it will kall ''on-resize'' which
 must be of form (lambda (w h) ...).
 |#
 (define (poll on-keypress on-resize)
