@@ -69,15 +69,14 @@
 	 ;; Modification keys
 	 mod-alt
 	 ;; Colors
-	 color-default
-	 color-black
-	 color-red
-	 color-green
-	 color-yellow
-	 color-blue
-	 color-magenta
-	 color-cyan
-	 color-white
+	 black
+	 red
+	 green
+	 yellow
+	 blue
+	 magenta
+	 cyan
+	 white
 	 ;; Attributes
 	 bold
 	 underline
@@ -183,15 +182,15 @@
 ;; Modification keys
 (define mod-alt #x01)
 ;; Colors
-(define color-default #x00)
-(define color-black #x01)
-(define color-red #x02)
-(define color-green #x03)
-(define color-yellow #x04)
-(define color-blue #x05)
-(define color-magenta #x06)
-(define color-cyan #x07)
-(define color-white #x08)
+(define default-color #x00)
+(define black #x01)
+(define red #x02)
+(define green #x03)
+(define yellow #x04)
+(define blue #x05)
+(define magenta #x06)
+(define cyan #x07)
+(define white #x08)
 ;; Attributes
 (define bold #x0100)
 (define underline #x0200)
@@ -306,11 +305,11 @@ unspecified negative value when called before ``(init)`` or after ``(shutdown)``
 
 #|
 Clears the interbal back buffer to specific foreground and background
-color/attributes which default to ``color-default``
+color/attributes which default to ``default-color``
 |#
 (define (clear #!optional
-	       (fg color-default)
-	       (bg color-default))
+	       (fg default-color)
+	       (bg default-color))
   ((foreign-lambda void "tb_set_clear_attributes" 
 		   unsigned-short unsigned-short) fg bg)
   ((foreign-lambda void "tb_clear")))
