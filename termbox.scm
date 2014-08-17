@@ -82,28 +82,10 @@
 	 bold
 	 underline
 	 reversed
-	 ;; Error codes
-	 error-eunsupported-terminal
-	 error-efailed-to-open-tty
-	 error-epipe-trap-error
-	 ;; Hide cursor value
-	 hide-cursor
-	 ;; Input modes
-	 input-current
-	 input-esc
-	 input-alt
-	 ;; Output modes
-	 output-current
-	 output-normal
-	 output-256
-	 output-216
-	 output-grayscale
-	 ;; EOF
-	 utf8-eof
 	 ;; Cell
 	 create-cell
 	 create-attribute
-	 ;; Init/shutdown
+	 ;; Functions
 	 init
 	 shutdown
 	 width
@@ -117,10 +99,7 @@
 	 input-mode
 	 output-mode
 	 ; peek-event ; find a way to place neatly
-	 poll
-	 utf8-char-length
-	 utf8-char-to-unicode
-	 utf8-unicode-to-char)
+	 poll)
 	(import chicken scheme foreign)
 	(use srfi-4)
 	
