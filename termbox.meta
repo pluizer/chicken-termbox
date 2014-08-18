@@ -1,2 +1,8 @@
-((author "Richard van Roy")
- (synopsis "Library for writing text-based user interfaces"))
+(
+
+(author "Richard van Roy")
+(synopsis "Library for writing text-based user interfaces")
+(license "BSD")
+(category ui)
+
+)
