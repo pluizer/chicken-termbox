@@ -125,6 +125,7 @@ SOFTWARE.
 	 poll)
 	(import chicken scheme foreign)
 	(use srfi-4 extras)
+    (require-extension utf8)
 	
 #>
 #include "termbox.h"

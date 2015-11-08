@@ -4,5 +4,6 @@
 (synopsis "Library for writing text-based user interfaces")
 (license "BSD")
 (category ui)
+(needs utf8)
 
 )
